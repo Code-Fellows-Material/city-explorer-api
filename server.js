@@ -22,6 +22,7 @@ app.get("/*", handleError);
 
 //Sara requested we save lat and lon until tomorrow, so weather requests will be by name only.
 function handleWeather(req, res) {
+    console.log('received weather request for:', req.query.searchQuery);
     // check searchQuery against known cities, send error status if no match.
     let knownCities = ['seattle', 'paris', 'amman']
     let searchQuery = req.query.searchQuery.toLowerCase();
