@@ -35,6 +35,12 @@ app.get("/*", handleError);
 
 //------------------Handler Functions-----------------------
 
+//Handle Error Route
+function handleError(req, res) {
+    console.log("Error!");
+    res.sendStatus(500);
+}
+
 async function handleWeather(req, res) {
     console.log("weather request:", req.query.lat, req.query.lon);
     try {
@@ -69,12 +75,6 @@ async function handleMovie(req, res) {
         res.sendStatus(500);
         return
     }
-}
-
-//Handle Error Route
-function handleError(req, res) {
-    console.log("Error!");
-    res.sendStatus(500);
 }
 
 app.listen(PORT, () => console.log("server is listening on port ", PORT));
