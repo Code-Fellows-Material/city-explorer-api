@@ -4,11 +4,22 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
-const e = require("express");
 const app = express();
 const PORT = process.env.PORT;
 
 app.use(cors());
+
+class MovieInfo {
+    constructor(data){
+        this.title = data.title;
+        this.overview = data.overview;
+        this.averageVotes = data.average_votes;
+        this.totalVotes = data.total_votes;
+        this.imageUrl = data.image_url;
+        this.popularity = data.popularity;
+        this.releasedOn = data.released_on;
+    }
+}
 
 class ForeCast {
     constructor(data) {
@@ -19,19 +30,10 @@ class ForeCast {
 
 // routes
 app.get("/weather", handleWeather);
-// app.get("/location", handleLocation);
-// app.get("/movie", handleMovie);
+app.get("/movie", handleMovie);
 app.get("/*", handleError);
 
 //------------------Handler Functions-----------------------
-
-//Handle Error Route
-function handleError(req, res) {
-    console.log("Error!");
-    res.sendStatus(500);
-}
-
-//--------------Helper Functions----------------------
 
 async function handleWeather(req, res) {
     console.log("weather request:", req.query.lat, req.query.lon);
@@ -40,7 +42,7 @@ async function handleWeather(req, res) {
         const weatherResponse = await axios.get(url);
         let forecastArr = [];
         for (let data of weatherResponse.data.data) {
-        forecastArr.push(new ForeCast(data));
+            forecastArr.push(new ForeCast(data));
         }
         res.status(200).send(forecastArr);
     } catch (error) {
@@ -50,19 +52,29 @@ async function handleWeather(req, res) {
     }
 }
 
-// async function handleLocation(req, res) {}
+async function handleMovie(req, res) {
+    console.log("movie: ", req.query.searchQuery);
+    try {
+        const movieResponse = await axios.get(
+        `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&query=${req.query.searchQuery}`
+        );
+        let movieArray = [];
+        for (let data of movieResponse.data.results) {
+            movieArray.push(new MovieInfo(data));
+        }
+        res.status(200).send(movieArray);
+    } 
+    catch (error) {
+        console.log('movie error')
+        res.sendStatus(500);
+        return
+    }
+}
 
-// async function handleMovie(req, res) {
-//     console.log("location");
-//     try {
-//         const movieResponse = await axios.get(
-//         `https://api.themoviedb.org/3/movie/76341?api_key=${process.env.MOVIE_API_KEY}`
-//         );
-//         res.status(200).send(movieResponse.data.data);
-//         console.log(movieResponse.data.data);
-//     } catch (error) {
-//         console.log(error.response.data.error);
-//     }
-// }
+//Handle Error Route
+function handleError(req, res) {
+    console.log("Error!");
+    res.sendStatus(500);
+}
 
 app.listen(PORT, () => console.log("server is listening on port ", PORT));
