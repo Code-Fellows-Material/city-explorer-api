@@ -3,42 +3,72 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const list = require("./data/weather.json");
+const axios = require("axios");
 const app = express();
 const PORT = process.env.PORT;
 
 app.use(cors());
 
+class MovieInfo {
+    constructor(data){
+        this.title = data.title;
+        this.overview = data.overview;
+        this.averageVotes = data.average_votes;
+        this.totalVotes = data.total_votes;
+        this.imageUrl = data.image_url;
+        this.popularity = data.popularity;
+        this.releasedOn = data.released_on;
+    }
+}
+
 class ForeCast {
-    constructor(date, description){
-        this.date = date,
-        this.description = description
+    constructor(data) {
+        this.date = data.datetime;
+        this.description = `a high of ${data.max_temp}, a low of ${data.low_temp}, with ${data.weather.description}`;
     }
 }
 
 // routes
 app.get("/weather", handleWeather);
+app.get("/movie", handleMovie);
 app.get("/*", handleError);
 
-//Sara requested we save lat and lon until tomorrow, so weather requests will be by name only.
-function handleWeather(req, res) {
-    console.log('received weather request for:', req.query.searchQuery);
-    // check searchQuery against known cities, send error status if no match.
-    let knownCities = ['seattle', 'paris', 'amman']
-    let searchQuery = req.query.searchQuery.toLowerCase();
-    if(knownCities.indexOf(searchQuery) === -1){
+//------------------Handler Functions-----------------------
+
+async function handleWeather(req, res) {
+    console.log("weather request:", req.query.lat, req.query.lon);
+    try {
+        const url = `http://api.weatherbit.io/v2.0/forecast/daily?lat=${req.query.lat}&lon=${req.query.lon}&key=${process.env.WEATHER_API_KEY}&units=I`;
+        const weatherResponse = await axios.get(url);
+        let forecastArr = [];
+        for (let data of weatherResponse.data.data) {
+            forecastArr.push(new ForeCast(data));
+        }
+        res.status(200).send(forecastArr);
+    } catch (error) {
         console.log('city error')
         res.sendStatus(500);
         return
-    };
-    //Find the requested city, then find the forecast for that city and save it to an array
-    let city = list.find(element => element.city_name.toLowerCase() === searchQuery);
-    let forecastArr = [];
-    for(let data of city.data){
-        forecastArr.push( new ForeCast(data.datetime, data.weather.description));
     }
-    //turn the forecast array into JSON string and send the array back to the client
-    res.status(200).send(JSON.stringify(forecastArr));
+}
+
+async function handleMovie(req, res) {
+    console.log("movie: ", req.query.searchQuery);
+    try {
+        const movieResponse = await axios.get(
+        `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&query=${req.query.searchQuery}`
+        );
+        let movieArray = [];
+        for (let data of movieResponse.data.results) {
+            movieArray.push(new MovieInfo(data));
+        }
+        res.status(200).send(movieArray);
+    } 
+    catch (error) {
+        console.log('movie error')
+        res.sendStatus(500);
+        return
+    }
 }
 
 //Handle Error Route
