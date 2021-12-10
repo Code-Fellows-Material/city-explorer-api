@@ -20,7 +20,8 @@ This application utilizes the Node.js Express.js dotenv and cors libraries
 ## Change Log
 
 Version 1.1.0 - 12/07/2021 - Application now has a fully-functional express server, with a GET route for the location resource.
-Version 1.2.0 - 12/08/2021 - Application now serves API data from weatherbit.io, and themoviedb.org
+Version 1.2.0 - 12/08/2021 - Application now serves API data from weatherbit.io, and themoviedb.org.
+Version 1.3.0 - 12/09/2021 - Modularize Server.
 <!-- Use this area to document the iterative changes made to your application as each feature is successfully implemented. Use time stamps. Here's an example:
 
 01-01-2001 4:59pm - Application now has a fully-functional express server, with a GET route for the location resource. -->
@@ -81,4 +82,18 @@ Start time: 8:15
 
 Finish time: 12:30
 
-Actual time needed to complete: 4.25hrs
+Actual time needed to complete: 3.5hrs
+
+---
+
+## Time Estimate 1
+
+Name of feature: Feature 1
+
+Estimate of time needed to complete: 1hrs
+
+Start time: 3:30
+
+Finish time: 4:30
+
+Actual time needed to complete: 1hr
