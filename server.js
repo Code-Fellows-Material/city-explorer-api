@@ -1,81 +1,33 @@
-"use strict";
 
+//------------------Setup-----------------------
+"use strict";
 require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
-const axios = require("axios");
 const app = express();
-const PORT = process.env.PORT;
 
 app.use(cors());
 app.options('*', cors());  
 
-class MovieInfo {
-    constructor(data){
-        this.title = data.title;
-        this.overview = data.overview;
-        this.averageVotes = data.average_votes;
-        this.totalVotes = data.total_votes;
-        this.imageUrl = data.image_url;
-        this.popularity = data.popularity;
-        this.releasedOn = data.released_on;
-    }
-}
+//------------------Change for Local-----------------------
+const PORT = process.env.PORT;
+// const PORT = 3001;
 
-class ForeCast {
-    constructor(data) {
-        this.date = data.datetime;
-        this.description = `a high of ${data.max_temp}, a low of ${data.low_temp}, with ${data.weather.description}`;
-    }
-}
+//------------------Modules-----------------------
+const handleWeather = require('./route_handlers/weather');
+const handleMovie = require('./route_handlers/movies');
 
-// routes
+//------------------Routes-----------------------
 app.get("/weather", handleWeather);
-app.get("/movie", handleMovie);
+app.get("/movies", handleMovie);
 app.get("/*", handleError);
 
-//------------------Handler Functions-----------------------
-
-//Handle Error Route
+//------------------Error Handler-----------------------
 function handleError(req, res) {
     console.log("Error!");
     res.sendStatus(500);
 }
 
-async function handleWeather(req, res) {
-    console.log("weather request:", req.query.lat, req.query.lon);
-    try {
-        const url = `http://api.weatherbit.io/v2.0/forecast/daily?lat=${req.query.lat}&lon=${req.query.lon}&key=${process.env.WEATHER_API_KEY}&units=I`;
-        const weatherResponse = await axios.get(url);
-        let forecastArr = [];
-        for (let data of weatherResponse.data.data) {
-            forecastArr.push(new ForeCast(data));
-        }
-        res.status(200).send(forecastArr);
-    } catch (error) {
-        console.log('city error')
-        res.sendStatus(500);
-        return
-    }
-}
-
-async function handleMovie(req, res) {
-    console.log("movie: ", req.query.searchQuery);
-    try {
-        const movieResponse = await axios.get(
-        `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&query=${req.query.searchQuery}`
-        );
-        let movieArray = [];
-        for (let data of movieResponse.data.results) {
-            movieArray.push(new MovieInfo(data));
-        }
-        res.status(200).send(movieArray);
-    } 
-    catch (error) {
-        console.log('movie error')
-        res.sendStatus(500);
-        return
-    }
-}
-
+//------------------Listener-----------------------
 app.listen(PORT, () => console.log("server is listening on port ", PORT));
