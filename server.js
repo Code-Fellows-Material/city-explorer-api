@@ -11,8 +11,8 @@ app.use(cors());
 app.options('*', cors());  
 
 //------------------Change for Local-----------------------
-const PORT = process.env.PORT;
-// const PORT = 3001;
+//const PORT = process.env.PORT;
+const PORT = 3001;
 
 //------------------Modules-----------------------
 const handleWeather = require('./route_handlers/weather');
