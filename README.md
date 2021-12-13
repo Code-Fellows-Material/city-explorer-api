@@ -1,7 +1,7 @@
 # city-explorer-api
 
 **Author**: Kellen Linse
-**Version**: 1.1.0 (increment the patch/fix version number if you make more commits past your first submission)
+**Version**: 1.4.0 (increment the patch/fix version number if you make more commits past your first submission)
 
 ## Overview
 
@@ -33,6 +33,9 @@ Data diagram created in cooperation with Beau Hibbert and Spencer Tower
 
 ![Data Flow Diagram](./README_resources/Data_Flow_Diagram_Lab_2.JPG)
 ![Data Flow Diagram](./README_resources/DataFlow_v3.1.JPG)
+![Data Flow Diagram](./README_resources/DataFlow_v4.JPG)
+
+Note: Front end cache shown in diagram was not implemented.
 
 ## Time Estimate 1
 

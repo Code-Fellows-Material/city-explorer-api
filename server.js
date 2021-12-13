@@ -7,10 +7,11 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 
+//------------------cors-----------------------
 app.use(cors());
 app.options('*', cors());  
 
-//------------------Change for Local-----------------------
+//------------------Port-----------------------
 const PORT = process.env.PORT;
 // const PORT = 3001;
 
